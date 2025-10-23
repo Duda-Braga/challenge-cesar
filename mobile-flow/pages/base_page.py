@@ -42,6 +42,9 @@ class BasePage:
     def is_element_checked(self, by, locator):
         return self.find_element(by, locator).get_attribute("checked")
     
+    def is_element_selected(self, by, locator):
+        return self.find_element(by, locator).get_attribute("selected")
+    
     def scroll_untill_is_visible(self, by, locator, way, max_scroll):
         for i in range(max_scroll):
             try:
