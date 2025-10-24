@@ -3,6 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from utils.mobile_gestures import MobileGestures 
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.keys import Keys
 
 class BasePage:
     '''
@@ -88,3 +89,9 @@ class BasePage:
             
             self.gestures.scroll_screen(direction=way)
         return False
+    
+    def send_enter_to_element(self, by, locator):
+        """ENTER/RETURN"""
+        element = self.ge(by, locator)
+        if element:
+            element.submit()
