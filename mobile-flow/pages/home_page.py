@@ -1,27 +1,26 @@
 from appium.webdriver.common.appiumby import AppiumBy
 from .base_page import BasePage
+from selenium.common.exceptions import NoSuchElementException
 
 class Home(BasePage):
     class Locators:
-        SEARCH_BAR = (AppiumBy.ID," ")
-        HOME_ICON = (AppiumBy.ID," ")
-        ACCOUNT_ICON = (AppiumBy.ID," ")
+        SEARCH_BAR = (AppiumBy.ACCESSIBILITY_ID, "busque aqui seu produto")
+        HOME_ICON = (AppiumBy.ACCESSIBILITY_ID, "Home\nTab 1 of 5")
+        ACCOUNT_ICON = (AppiumBy.ID,"Conta\nTab 5 of 5")
         #promation banner
-        CLOSE_BANNER = (AppiumBy.CLASS_NAME, "android.widget.Button")
-        BANNER = (AppiumBy.CLASS_NAME, "android.widget.Button")
-        
+        # BANNER_CONTAINER = (AppiumBy.CLASS_NAME, "android.app.Dialog")
+        # CLOSE_BANNER = (AppiumBy.CLASS_NAME, "android.widget.Button")
+        # CLOSE_BUTTON_TEXT = "Close"
+
     def __init__(self,driver):
         super().__init__(driver)
     
-    def is_on_home_page(self):
+    def is_on_home_screen(self):
         return self.is_element_selected(*self.Locators.HOME_ICON)
-
-    def close_banner(self):
-        if self.is_element_displayed(*self.Locators.BANNER):
-            self.click_element(*self.Locators.CLOSE_BANNER)
-
-    def search_product(self, load_data): #create load data function with api info
-        #see if it changes if you click before
-        #self.click_element(AppiumBy.ID, *self.Locators.SEARCH_BAR)
-        self.send_keys_to_element(AppiumBy.ID, *self.Locators.SEARCH_BAR, load_data[""])
     
+    def go_to_home(self):
+        self.click_element(*self.Locators.HOME_ICON)
+
+    def go_to_serach_page(self):
+        self.click_element(*self.Locators.SEARCH_BAR)
+

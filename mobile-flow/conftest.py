@@ -32,3 +32,11 @@ def driver():
     # This code runs AFTER the test function completes (or fails)
     print("\nQuitting driver...")
     _driver.quit()
+
+@pytest.fixture(scope="session")
+def load_data():
+    """Reads the JSON from data and returns it as a dictionary"""
+    json_path = Path(__file__).parent / "data" / "generated_wishlist_fixture.json"
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
