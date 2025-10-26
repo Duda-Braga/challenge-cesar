@@ -4,12 +4,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver 
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 from config import DEFAULT_TIMEOUT
 
 class BasePage:
     """
-    communn methods to all page objects
+    common methods to all page objects
     """
     
     def __init__(self, driver):
@@ -21,14 +22,49 @@ class BasePage:
         self.wait = WebDriverWait(self.driver, DEFAULT_TIMEOUT)
 
 
-
     def _find_element(self, by_locator):
-        return self.wait.until(EC.visibility_of_element_located(by_locator))
+        try:
+            return self.wait.until(EC.presence_of_element_located(by_locator))
+        except (TimeoutException, NoSuchElementException):
+            return None
 
-    def _find_clickable_element(self, by_locator: tuple):
-        return self.wait.until(EC.element_to_be_clickable(by_locator))
-    
+    def _wait_for_visibility(self, by_locator): 
+        try: 
+            return self.wait.until(EC.visibility_of_element_located(by_locator))
+        except (TimeoutException, NoSuchElementException): 
+            return None
+        
+    def _wait_for_clickable(self, by_locator):
+        try:
+            return self.wait.until(EC.element_to_be_clickable(by_locator))
+        except (TimeoutException, NoSuchElementException): 
+            return None
+
+        
+
     def click_element(self, by_locator):
-        self._find_clickable_element(by_locator).click()
+        element = self._wait_for_clickable(by_locator)
+        if element: 
+            element.click()
+            return True 
+        return False
+    
+    def send_keys_to_element(self, by_locator, text):
+        element = self._wait_for_visibility(by_locator)
+        if element: 
+            element.send_keys(text)
+            return True 
+        return False
 
 
+    def is_element_displayed(self, by_locator):
+        element = self._wait_for_visibility(by_locator) 
+        if element: 
+            return True 
+        return False
+
+    def get_element_text(self, by_locator):
+        element = self._wait_for_visibility(by_locator)
+        if element: 
+            return element.text
+        return ""
