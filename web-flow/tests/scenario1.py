@@ -1,5 +1,8 @@
 import pytest
 from pages.home_page import HomePage
+from pages.login_page import Login
+
+import time
 
 @pytest.mark.buttons
 def test_new_user_registration_and_password_setup(driver):
@@ -8,13 +11,20 @@ def test_new_user_registration_and_password_setup(driver):
     home.navigate()
     home.close_promotion_banner()
     home.go_to_login()
+    
+    login = Login(driver)
+    assert login.is_on_login_page(), "The site is not on the login screen"
 
+    login.fill_email_field()
+    login.send_email()
+    time.sleep(5)
     #assert loign page
 
 
 
 # 1. Access the website: Open the browser and go to the Americanas website.
 # 2. Navigate to Registration: Click on the "Login or Sign Up" option.
+
 # 3. Generate Temporary Email: In a new tab, go to https://temp-mail.io/ and copy the generated email.
 # 4. Enter Email: Return to the Americanas website, enter the temporary email in the registration field, and click to send the verification code.
 # 5. Get Code: Go back to the temp-mail website, open the received email, and copy the verification code.
