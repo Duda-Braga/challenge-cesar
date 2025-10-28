@@ -1,32 +1,46 @@
 import pytest
 from pages.home_page import HomePage
-from pages.login_page import Login
-
+from pages.login_page import LoginPage
+from pages.tempEmail_page import TempMailPage
 import time
 
 @pytest.mark.buttons
 def test_new_user_registration_and_password_setup(driver):
-    
+
     home = HomePage(driver)
     home.navigate()
     home.close_promotion_banner()
     home.go_to_login()
     
-    login = Login(driver)
+    login = LoginPage(driver)
     assert login.is_on_login_page(), "The site is not on the login screen"
 
-    login.fill_email_field()
-    login.send_email()
-    time.sleep(5)
-    #assert loign page
+
+    # new tab
+    driver.execute_script("window.open('https://temp-mail.io/');")
+    time.sleep(1)
+    tempEmail = TempMailPage(driver)
+    windows = driver.window_handles
+    driver.switch_to.window(windows[-1])
+    time.sleep(1)
+    tempEmail.click_copy_button()
+    temporary_email = tempEmail.get_email_address()
+
+    # back to americanas
+    main_window_handle = driver.window_handles[0]
+    driver.switch_to.window(main_window_handle)
+    login.fill_email_field(temporary_email)
+    login.enter_email()
+    time.sleep(2)
+
 
 
 
 # 1. Access the website: Open the browser and go to the Americanas website.
 # 2. Navigate to Registration: Click on the "Login or Sign Up" option.
-
 # 3. Generate Temporary Email: In a new tab, go to https://temp-mail.io/ and copy the generated email.
 # 4. Enter Email: Return to the Americanas website, enter the temporary email in the registration field, and click to send the verification code.
+
 # 5. Get Code: Go back to the temp-mail website, open the received email, and copy the verification code.
 # 6. Confirm Registration: Return to the Americanas website and enter the code to finalize the registration.
 # 7. Verify Redirect: Confirm that you have been redirected to the homepage.
