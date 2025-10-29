@@ -125,3 +125,33 @@ def test_registration_empty_password(base_url, api_client):
 
 
 
+@pytest.mark.api_test
+@pytest.mark.authentication_test
+def test_succesful_login(base_url, api_client):
+    # assure regitsration for login
+    unique_id = str(uuid.uuid4()) 
+    email = f"test_{unique_id}@example.com"
+    username = f"user_{unique_id[:8]}"
+    password = "correct_password"
+    
+    user_data = {
+        "email": email,
+        "password": password, 
+        "username": username
+    }
+    
+    response = api_client.post(f"{base_url}/auth/register", json=user_data)
+    assert response.status_code == 200, f"Status should be 200, but it is {response.status_code}"
+
+    login_data = {
+        "email": email,
+        "password": password
+    }
+
+    login_response = api_client.post(f"{base_url}/auth/login", json=login_data)
+    assert login_response.status_code == 200, f"Status should be 200 for successful login, but it is {login_response.status_code}"
+
+    data_login = login_response.json()
+    assert "access_token" in data_login, "Access token is missing in the login response"
+    assert data_login.get("token_type") == "bearer", f"Token type should be bearer, but it is {data_login.get('token_type')}"
+    
