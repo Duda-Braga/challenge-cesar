@@ -125,27 +125,35 @@ def test_registration_empty_password(base_url, api_client):
 
 
 
+
+
+LOGIN_TEST_unique_id = str(uuid.uuid4()) 
+LOGIN_TEST_email = f"test_{LOGIN_TEST_unique_id}@example.com"
+LOGIN_TEST_username = f"user_{LOGIN_TEST_unique_id[:8]}"
+LOGIN_TEST_password = "correct_password"
+
 @pytest.mark.api_test
 @pytest.mark.authentication_test
-def test_succesful_login(base_url, api_client):
-    # assure regitsration for login
-    unique_id = str(uuid.uuid4()) 
-    email = f"test_{unique_id}@example.com"
-    username = f"user_{unique_id[:8]}"
-    password = "correct_password"
+def test_new_user(base_url, api_client):
+    """"single registration for all login tests"""
     
     user_data = {
-        "email": email,
-        "password": password, 
-        "username": username
+        "email": LOGIN_TEST_email,
+        "password": LOGIN_TEST_password, 
+        "username": LOGIN_TEST_username
     }
     
     response = api_client.post(f"{base_url}/auth/register", json=user_data)
-    assert response.status_code == 200, f"Status should be 200, but it is {response.status_code}"
+    assert response.status_code == 200, f"Status should be 200 for correct registration, but it is {response.status_code}"
+
+
+@pytest.mark.api_test
+@pytest.mark.authentication_test
+def test_succesful_login(base_url, api_client):
 
     login_data = {
-        "email": email,
-        "password": password
+        "email": LOGIN_TEST_email,
+        "password": LOGIN_TEST_password
     }
 
     login_response = api_client.post(f"{base_url}/auth/login", json=login_data)
@@ -155,3 +163,40 @@ def test_succesful_login(base_url, api_client):
     assert "access_token" in data_login, "Access token is missing in the login response"
     assert data_login.get("token_type") == "bearer", f"Token type should be bearer, but it is {data_login.get('token_type')}"
     
+
+@pytest.mark.api_test
+@pytest.mark.authentication_test
+def test_login_wrong_password(base_url, api_client):
+
+    login_data = {
+        "email": LOGIN_TEST_email,
+        "password": "wrong_password"
+    }
+
+    login_response = api_client.post(f"{base_url}/auth/login", json=login_data)
+    assert login_response.status_code == 401, f"Status should be 401 (unauthorized) for login with incorrect password, but it is {login_response.status_code}"
+
+    data_login = login_response.json()
+    error_msg = data_login.get("detail")
+    expected_error_msg = "Incorrect email or password"
+    assert error_msg == expected_error_msg, f"Error message should be {expected_error_msg} for login with incorrect password, but it it {error_msg}"
+
+
+@pytest.mark.api_test
+@pytest.mark.authentication_test
+def test_login_non_existent_user(base_url, api_client):
+
+    login_data = {
+        "email": f"non_existing{LOGIN_TEST_email}",
+        "password": LOGIN_TEST_password
+    }
+
+    login_response = api_client.post(f"{base_url}/auth/login", json=login_data)
+    assert login_response.status_code == 401, f"Status should be 401 (unauthorized) for login with Non-Existent User, but it is {login_response.status_code}"
+
+    data_login = login_response.json()
+    error_msg = data_login.get("detail")
+    expected_error_msg = "Incorrect email or password"
+    assert error_msg == expected_error_msg, f"Error message should be {expected_error_msg} for login with Non-Existent User, but it it {error_msg}"
+
+
