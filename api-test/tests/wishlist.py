@@ -7,6 +7,7 @@ WISH_TEST_unique_id = str(uuid.uuid4())
 WISH_TEST_email = f"test_{WISH_TEST_unique_id}@example.com"
 WISH_TEST_username = f"user_{WISH_TEST_unique_id[:8]}"
 WISH_TEST_password = "test_password"
+WISH_TEST_id = None
 
 @pytest.mark.api_test
 @pytest.mark.wishlist_test
@@ -21,6 +22,10 @@ def test_authenticated_user(base_url, api_client):
     
     response = api_client.post(f"{base_url}/auth/register", json=user_data)
     assert response.status_code == 200, f"Status should be 200 for correct registration, but it is {response.status_code}"
+
+    data = response.json()
+    global WISH_TEST_id
+    WISH_TEST_id = data.get("id")
 
 
 
@@ -142,3 +147,71 @@ def test_create_wishlsit_invalid_data(base_url, api_client):
     expected_error_msg = 'Missing name'
     error_msg = data_wishilist.get("detail")
     assert error_msg == expected_error_msg, f"Error message should be {expected_error_msg} for creating a wishlist with invalid data, but it is {error_msg}"
+
+
+
+
+
+
+@pytest.mark.api_test
+@pytest.mark.wishlist_test
+def test_successfully_retrieve_all_wishlists(base_url, api_client):
+
+    login_data = {
+        "email": WISH_TEST_email,
+        "password": WISH_TEST_password, 
+    }
+    login_response =  api_client.post(f"{base_url}/auth/login", json=login_data)
+    assert login_response.status_code == 200, f"Status should be 200 for correct login, but it is {login_response.status_code}"
+
+    data_login = login_response.json()
+    auth_headers = {"Authorization": f"Bearer {data_login['access_token']}"}
+
+    # assure it has at least one wishlist
+    unique_id = str(uuid.uuid4()) 
+    wish_name = f"Wishlist name {unique_id}"
+    wish_data = {"name": wish_name}
+
+    wish_response = api_client.post(f"{base_url}//wishlists", json=wish_data, headers=auth_headers)
+    assert wish_response.status_code == 200, f"Status should be 200 for create new wishlist, but it is {wish_response.status_code}"
+
+
+
+    get_wish_response = api_client.get(f"{base_url}//wishlists", headers=auth_headers)
+    assert get_wish_response.status_code == 200, f"Status should be 200 for get wishlist, but it is {get_wish_response.status_code}"
+    data_get_wish = get_wish_response.json()
+    
+    assert len(data_get_wish) > 0, "Wishlist should not be empty"
+    for i in range(len(data_get_wish)):
+        assert data_get_wish[i].get("owner_id") == WISH_TEST_id, f"Wrong user wishlist, It should be from id_user {WISH_TEST_id}, but it is from {data_get_wish[i].get('owner_id')}"
+
+
+
+@pytest.mark.api_test
+@pytest.mark.wishlist_test
+def test_retrieve_non_existent_wishlists(base_url, api_client):
+    # new user to assure it has an empty wishlist
+    new_user_data = {
+        "email": f"{WISH_TEST_email}_no_wishlist",
+        "password": f"{WISH_TEST_password}_no_wishlist", 
+        "username": f"{WISH_TEST_username}_no_wishlist"
+    }
+    response = api_client.post(f"{base_url}/auth/register", json=new_user_data)
+    assert response.status_code == 200, f"Status should be 200 for correct registration, but it is {response.status_code}"
+
+    # login
+    new_login_data = {
+        "email": f"{WISH_TEST_email}_no_wishlist",
+        "password": f"{WISH_TEST_password}_no_wishlist"
+    }
+    login_response =  api_client.post(f"{base_url}/auth/login", json=new_login_data)
+    assert login_response.status_code == 200, f"Status should be 200 for correct login, but it is {login_response.status_code}"
+
+    data_login = login_response.json()
+    auth_headers = {"Authorization": f"Bearer {data_login['access_token']}"}
+
+    get_wish_response = api_client.get(f"{base_url}//wishlists", headers=auth_headers)
+    assert get_wish_response.status_code == 200, f"Status should be 200 for get empty wishlist, but it is {get_wish_response.status_code}"
+    data_get_wish = get_wish_response.json()
+    
+    assert len(data_get_wish) == 0, "Wishlist should  be empty"
