@@ -15,35 +15,40 @@ def test_new_user_registration_and_password_setup(driver):
     login = LoginPage(driver)
     assert login.is_on_login_page(), "The site is not on the login screen"
 
-
-    # new tab
-    driver.execute_script("window.open('https://temp-mail.io/');")
-    time.sleep(1)
     tempEmail = TempMailPage(driver)
-    windows = driver.window_handles
-    driver.switch_to.window(windows[-1])
-    time.sleep(1)
+    tempEmail.navigate()
+    tempEmail.go_to_last_tab()
     tempEmail.click_copy_button()
     temporary_email = tempEmail.get_email_address()
+    assert temporary_email != "", "Failed to retrieve temporary email"
 
-    # back to americanas
-    main_window_handle = driver.window_handles[0]
-    driver.switch_to.window(main_window_handle)
+    tempEmail.go_to_first_tab()
     login.fill_email_field(temporary_email)
-    login.enter_email()
-    time.sleep(2)
+    assert login.enter_email(), "Error to send email"
 
 
+    tempEmail.go_to_last_tab()
+    tempEmail.click_refresh_button()
+    access_code = tempEmail.get_email_code()
+    assert access_code != "", "Error to get access code"
+    
+    tempEmail.go_to_first_tab()
+    login.fill_code_field(access_code)
+    assert login.enter_code(), "Error to send access code"
+    
+    home.close_promotion_banner()
 
+    time.sleep(30)
 
 # 1. Access the website: Open the browser and go to the Americanas website.
 # 2. Navigate to Registration: Click on the "Login or Sign Up" option.
 # 3. Generate Temporary Email: In a new tab, go to https://temp-mail.io/ and copy the generated email.
 # 4. Enter Email: Return to the Americanas website, enter the temporary email in the registration field, and click to send the verification code.
-
 # 5. Get Code: Go back to the temp-mail website, open the received email, and copy the verification code.
 # 6. Confirm Registration: Return to the Americanas website and enter the code to finalize the registration.
 # 7. Verify Redirect: Confirm that you have been redirected to the homepage.
+
+
 # 8. Validate Login: Check if the new user's email is displayed in the page header.
 # 9. Access My Account: Open the "My Account" menu and confirm that the email in the registration tab is correct.
 # 10. Start Password Setup: Navigate to the authentication section and select "Set Password".

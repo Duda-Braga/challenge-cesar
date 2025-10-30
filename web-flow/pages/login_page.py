@@ -13,6 +13,9 @@ class LoginPage(BasePage):
         LOGIN_FIELD = (By.CSS_SELECTOR, "input[name='email']")
         # SEND_BTN = (By.CSS_SELECTOR, "button[type='submit']")
         SEND_BTN = (By.XPATH, "//button[.//span[text()='Enviar']]")
+        CODE_FIELD = (By.CSS_SELECTOR, "input[name='token']")
+        CONFIRM_CODE_BTN = (By.CSS_SELECTOR, "button[type='submit']")
+        ERROR_ALERT = (By.CSS_SELECTOR, "[role='alert']")
         
     def __init__(self, driver):
         super().__init__(driver)
@@ -32,3 +35,13 @@ class LoginPage(BasePage):
 
     def send_email(self):
         return self.click_element(self.Locators.SEND_BTN)
+    
+    def fill_code_field(self, text):
+        return self.send_keys_to_element(self.Locators.CODE_FIELD, text)
+    
+    def enter_code(self):
+        return self.send_keys_to_element(self.Locators.CODE_FIELD, (Keys.ENTER))
+    
+    
+    def send_code(self):
+        return self.click_element(self.Locators.CONFIRM_CODE_BTN)

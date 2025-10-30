@@ -68,3 +68,14 @@ class BasePage:
         if element: 
             return element.text
         return ""
+
+
+    def go_to_last_tab(self):
+        windows = self.driver.window_handles
+        self.driver.switch_to.window(windows[-1])
+        time.sleep(2)
+
+    def go_to_first_tab(self):
+        main_window_handle = self.driver.window_handles[0]
+        self.driver.switch_to.window(main_window_handle)
+        time.sleep(2)
