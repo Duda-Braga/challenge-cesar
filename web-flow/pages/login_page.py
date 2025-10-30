@@ -1,21 +1,15 @@
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
-
 from .base_page import BasePage
-
 
 class LoginPage(BasePage):
     class Locators:
         LOGIN_TITLE = (By.XPATH, "//h2[text()='login do cliente']")
         LOGIN_FIELD = (By.CSS_SELECTOR, "input[name='email']")
-        # SEND_BTN = (By.CSS_SELECTOR, "button[type='submit']")
-        SEND_BTN = (By.XPATH, "//button[.//span[text()='Enviar']]")
+        SEND_BTN = (By.CSS_SELECTOR, "button[type='submit']")
         CODE_FIELD = (By.CSS_SELECTOR, "input[name='token']")
         CONFIRM_CODE_BTN = (By.CSS_SELECTOR, "button[type='submit']")
-        ERROR_ALERT = (By.CSS_SELECTOR, "[role='alert']")
+        
         
     def __init__(self, driver):
         super().__init__(driver)
@@ -41,7 +35,6 @@ class LoginPage(BasePage):
     
     def enter_code(self):
         return self.send_keys_to_element(self.Locators.CODE_FIELD, (Keys.ENTER))
-    
     
     def send_code(self):
         return self.click_element(self.Locators.CONFIRM_CODE_BTN)
