@@ -1,6 +1,4 @@
 from selenium.webdriver.common.by import By 
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from selenium.webdriver.support import expected_conditions as EC
 from .base_page import BasePage 
 
 from config import TEMP_EMAIL_URL 

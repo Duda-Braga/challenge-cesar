@@ -12,6 +12,7 @@ class HomePage(BasePage):
     """
     class Locators:
         LOGIN_BTN = (By.CSS_SELECTOR, "a[aria-label='link para a página de login']")
+        LOGIN_NAME = (By.XPATH, "//span[contains(text(),'olá,')]")
 
         # promotion Locators
         PROMOTION_BANNER = (By.CLASS_NAME, "show-element")
@@ -22,6 +23,11 @@ class HomePage(BasePage):
 
     def navigate(self):
         self.driver.get(BASE_URL)
+
+    def is_on_home_page(self):
+        actual_url = self.driver.current_url
+        if actual_url == BASE_URL: return True
+        else: return False 
     
     def close_promotion_banner(self):
         """
@@ -38,3 +44,12 @@ class HomePage(BasePage):
         
     def go_to_login(self):
         self.click_element(self.Locators.LOGIN_BTN)
+
+    def get_logged_email(self):
+        complete_text =  self.get_element_text(self.Locators.LOGIN_NAME)
+        if complete_text == "": return ""
+        else:
+            return complete_text[5:] #remove 'ola, ' part
+        
+    def go_to_my_account(self):
+        self.click_element(self.Locators.LOGIN_NAME)

@@ -2,6 +2,7 @@ import pytest
 from pages.home_page import HomePage
 from pages.login_page import LoginPage
 from pages.tempEmail_page import TempMailPage
+from pages.myAccount_page import MyAccount
 import time
 
 @pytest.mark.buttons
@@ -36,9 +37,19 @@ def test_new_user_registration_and_password_setup(driver):
     login.fill_code_field(access_code)
     assert login.enter_code(), "Error to send access code"
     
+    time.sleep(3)
+    assert home.is_on_home_page(), "The site should be on home page after login"
     home.close_promotion_banner()
 
-    time.sleep(30)
+    assert home.get_logged_email() == temporary_email, f"Logged email should be {temporary_email}, but it is {home.get_logged_email()}"
+    home.go_to_my_account()
+
+    myAccount = MyAccount(driver)
+    #assert myAccount.is_on_my_account_page(), "The site should be on My Account page"
+
+    time.sleep(5)
+    myAccount.click_on_register()
+    #time.sleep(30)
 
 # 1. Access the website: Open the browser and go to the Americanas website.
 # 2. Navigate to Registration: Click on the "Login or Sign Up" option.
@@ -47,9 +58,8 @@ def test_new_user_registration_and_password_setup(driver):
 # 5. Get Code: Go back to the temp-mail website, open the received email, and copy the verification code.
 # 6. Confirm Registration: Return to the Americanas website and enter the code to finalize the registration.
 # 7. Verify Redirect: Confirm that you have been redirected to the homepage.
-
-
 # 8. Validate Login: Check if the new user's email is displayed in the page header.
+
 # 9. Access My Account: Open the "My Account" menu and confirm that the email in the registration tab is correct.
 # 10. Start Password Setup: Navigate to the authentication section and select "Set Password".
 # 11. Enter Password Code: Get the new code sent to temp-mail and enter it in the corresponding field.
