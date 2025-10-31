@@ -62,6 +62,12 @@ class BasePage:
         if element: 
             return True 
         return False
+    
+    def is_element_enabled(self, by_locator):
+        element = self._find_element(by_locator)
+        if element:
+            return element.is_enabled()
+        return False
 
     def get_element_text(self, by_locator):
         element = self._wait_for_visibility(by_locator)
