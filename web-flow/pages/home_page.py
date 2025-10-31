@@ -52,4 +52,4 @@ class HomePage(BasePage):
             return complete_text[5:] #remove 'ola, ' part
         
     def go_to_my_account(self):
-        self.click_element(self.Locators.LOGIN_NAME)
+        return self.click_element(self.Locators.LOGIN_NAME)
