@@ -3,6 +3,7 @@ from .base_page import BasePage
 
 from config import TEMP_EMAIL_URL 
 import time
+
 class TempMailPage(BasePage):
     """
     temporary email site
@@ -24,6 +25,7 @@ class TempMailPage(BasePage):
         return self._wait_for_visibility(self.Locators.EMAIL_FIELD).get_attribute("value")
 
     def click_refresh_button(self):
+        time.sleep(1)
         return self.click_element(self.Locators.REFRESH_BTN)
     
     def get_email_code(self):

@@ -51,47 +51,29 @@ def test_new_user_registration_and_password_setup(driver, load_data):
 
     tempEmail.go_to_last_tab()
     tempEmail.click_refresh_button()
-    time.sleep(3) #pega codigo errado as vezes
     set_password_code = tempEmail.get_email_code()
     assert set_password_code != "", "Error to get password definition code"
+    while(set_password_code == access_code): #same email
+        set_password_code = tempEmail.get_email_code()
+        tempEmail.click_refresh_button()
     tempEmail.go_to_first_tab()
 
     assert myAccount.fill_set_password_code(set_password_code), "Error to type set password code on authentication My Account page"
     
     myAccount.fill_password_field_less_8_char(load_data)
-    time.sleep(5)
-    assert myAccount.is_save_password_btn_inactive(), "The 'Save' button should be inactiv in the password reset in the authentication area"
+    assert myAccount.is_save_password_btn_inactive(), "The 'Save' button should be inactivate because the password is less than 8 characters"
 
     myAccount.fill_password_field_no_number(load_data)
-    assert myAccount.is_save_password_btn_inactive(), "The 'Save' button should be inactiv in the password reset in the authentication area"
+    assert myAccount.is_save_password_btn_inactive(), "The 'Save' button should be inactivate because the password is missing numbers"
     
     myAccount.fill_password_field_no_lowerchar(load_data)
-    assert myAccount.is_save_password_btn_inactive(), "The 'Save' button should be inactiv in the password reset in the authentication area"
+    assert myAccount.is_save_password_btn_inactive(), "The 'Save' button should be inactivate because the password is missings lowercase letters"
 
     myAccount.fill_password_field_no_upperchar(load_data)
-    assert myAccount.is_save_password_btn_inactive(), "The 'Save' button should be inactiv in the password reset in the authentication area"
+    assert myAccount.is_save_password_btn_inactive(), "The 'Save' button should be inactivate because the password is missing uppercase letters"
 
     myAccount.fill_password_field_correctly(load_data)
-    assert myAccount.is_save_password_btn_activate(), "The 'Save' button should be activate on set password area"
+    assert myAccount.is_save_password_btn_activate(), "The 'Save' button should be activate for a valid password"
     myAccount.click_save_password_button()
-    time.sleep(10)
 
-# 1. Access the website: Open the browser and go to the Americanas website.
-# 2. Navigate to Registration: Click on the "Login or Sign Up" option.
-# 3. Generate Temporary Email: In a new tab, go to https://temp-mail.io/ and copy the generated email.
-# 4. Enter Email: Return to the Americanas website, enter the temporary email in the registration field, and click to send the verification code.
-# 5. Get Code: Go back to the temp-mail website, open the received email, and copy the verification code.
-# 6. Confirm Registration: Return to the Americanas website and enter the code to finalize the registration.
-# 7. Verify Redirect: Confirm that you have been redirected to the homepage.
-# 8. Validate Login: Check if the new user's email is displayed in the page header.
-# 9. Access My Account: Open the "My Account" menu and confirm that the email in the registration tab is correct.
-#  10. Start Password Setup: Navigate to the authentication section and select "Set Password".
-# 11. Enter Password Code: Get the new code sent to temp-mail and enter it in the corresponding field.
-
-# 12. Test Password Rules:
-    # Try to save a password with less than 8 characters. The "Save" button should be inactive.
-    # Try to save a password without numbers. The "Save" button should be inactive.
-    # Try to save a password without lowercase letters. The "Save" button should be inactive.
-    # Try to save a password without uppercase letters. The "Save" button should be inactive.
-# 13. Set Valid Password: Enter a password that meets all criteria and click "Save Password".
-# 14. Validate success: Validate that the password was saved successfully (just validate that the sequence of asterisks appeared on the screen).
+    assert myAccount.is_new_password_saved(), "The password was not saved successfully"

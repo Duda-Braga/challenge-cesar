@@ -3,6 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver 
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
@@ -20,6 +21,7 @@ class BasePage:
         """
         self.driver: WebDriver = driver
         self.wait = WebDriverWait(self.driver, DEFAULT_TIMEOUT)
+        self.actions = ActionChains(self.driver)
 
 
     def _find_element(self, by_locator):
@@ -55,6 +57,20 @@ class BasePage:
             element.send_keys(text)
             return True 
         return False
+    
+    def clear_field_element(self, by_locator):
+        element = self._wait_for_visibility(by_locator)
+        if element: 
+            element.clear()
+            current_value = element.get_attribute('value')
+            
+            if current_value:
+                self.actions.click(element).perform() 
+                for _ in range(len(current_value)):
+                    self.actions.send_keys(Keys.BACK_SPACE)
+                self.actions.perform()
+                
+                self.actions.reset_actions()
 
 
     def is_element_displayed(self, by_locator):
