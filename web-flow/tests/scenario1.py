@@ -3,9 +3,7 @@ from pages.home_page import HomePage
 from pages.login_page import LoginPage
 from pages.tempEmail_page import TempMailPage
 from pages.myAccount_page import MyAccount
-import time
 
-@pytest.mark.buttons
 def test_new_user_registration_and_password_setup(driver, load_data):
 
     home = HomePage(driver)
@@ -37,7 +35,6 @@ def test_new_user_registration_and_password_setup(driver, load_data):
     login.fill_code_field(access_code)
     assert login.enter_code(), "Error to send access code"
     
-    time.sleep(3)
     assert home.is_on_home_page(), "The site should be on home page after login"
     home.close_promotion_banner()
 
