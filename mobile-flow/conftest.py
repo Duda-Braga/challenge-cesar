@@ -21,7 +21,8 @@ def driver():
         "uiautomator2ServerLaunchTimeout": 30000,
         "uiautomator2ServerInstallTimeout": 30000,
         "unicodeKeyboard": False,
-        "resetKeyboard": True
+        "resetKeyboard": True,
+        "appium:autoGrantPermissions": True
      })
     
     _driver = webdriver.Remote("http://127.0.0.1:4723", options=options)
@@ -33,10 +34,11 @@ def driver():
     print("\nQuitting driver...")
     _driver.quit()
 
-@pytest.fixture(scope="session")
-def load_data():
-    """Reads the JSON from data and returns it as a dictionary"""
-    json_path = Path(__file__).parent / "data" / "generated_wishlist_fixture.json"
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data
+# @pytest.fixture(scope="module")
+# def load_wishlist():
+#     """Reads the JSON from data and returns it as a dictionary"""
+#     json_path = Path(__file__).parent / "data" / "generated_wishlist_fixture.json"
+#     with open(json_path, "r", encoding="utf-8") as f:
+#         data = json.load(f)
+#     return data
+
