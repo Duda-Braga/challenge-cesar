@@ -5,6 +5,7 @@ from selenium.common.exceptions import TimeoutException
 
 from .base_page import BasePage
 from config import BASE_URL 
+import time
 
 class HomePage(BasePage):
     """
@@ -25,6 +26,7 @@ class HomePage(BasePage):
         self.driver.get(BASE_URL)
 
     def is_on_home_page(self):
+        time.sleep(2)
         actual_url = self.driver.current_url
         if actual_url == BASE_URL: return True
         else: return False 
@@ -44,8 +46,10 @@ class HomePage(BasePage):
         
     def go_to_login(self):
         self.click_element(self.Locators.LOGIN_BTN)
+        time.sleep(2)
 
     def get_logged_email(self):
+        time.sleep(2)
         complete_text =  self.get_element_text(self.Locators.LOGIN_NAME)
         if complete_text == "": return ""
         else:

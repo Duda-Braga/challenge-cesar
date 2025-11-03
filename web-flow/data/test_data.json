@@ -1,4 +1,11 @@
 {
+  "login_credentials": 
+    {
+  "email": "mecb.teste@gmail.com",
+  "correct_password": "",
+  "wrong_password" : "Wrong@123"
+    },
+
   "password_scenarios": 
     {
   "less_8_char": "Less#8",
