@@ -1,28 +1,50 @@
 import pytest
 import time
-from pages.allow_popups_page import Allows #sem fluent pages inicialmente
+import json
 from pages.home_page import Home
 from pages.search_page import Search
+from pages.product_page import Product
 
-def test_product_purchase_flow(driver, load_data):
-    #initialize all pages at the beginning for now, fluent pages later
-    allowpopup = Allows(driver)
+import json
+from pathlib import Path
+import os
+
+def load_wishlist():
+    """Reads the JSON from data and returns it as a dictionary"""
+    json_path = Path(__file__).parent.parent / "data" / "generated_wishlist_fixture.json"
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+@pytest.mark.parametrize("data_set",  load_wishlist())
+def test_product_purchase_flow(driver, data_set):
+
+    product_price = data_set['Price']
+    product_name = data_set['Product']
+    product_delivery = data_set['delivery_estimate']
+
     home = Home(driver)
-
-    allowpopup.allow_all_permitions()
-
     assert home.is_on_home_screen(), "App did not launch correctly"
-    home.go_to_serach_page()
 
+    home.go_to_serach_page()
     search = Search(driver)
-    search.search_element(load_data)
-    time.sleep(10)
+    search.search_element(product_name)
+    assert search.click_on_first_product(), "ERROR: couldt not find the product"
+
+    product = Product(driver)
+    assert product.is_product_name_correct(product_name), "Name is not correspoding according to the API response"
+    assert product.is_product_price_correct(product_price), "Price is not correspoding according to the API response"
+    
+
+    time.sleep(3)
 
 # 1. Open App: Launch the Americanas application.
 # 2. Search for Product: Use the search bar to look for a product from the wishlist.
 # 3. Select Product: Tap on the desired product in the search results.
 # 4. Validate Product Page:
 # Confirm that the product name and price are correct according to the API response.
+
+
 # Enter an invalid ZIP code, click "Calculate", and verify that an error message is displayed.
 # Enter the valid ZIP code returned by the API and validate the delivery time and shipping cost.
 # 5. Add to Cart: Tap the "Buy" button.

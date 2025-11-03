@@ -1,8 +1,7 @@
 from appium.webdriver.common.appiumby import AppiumBy
 from .base_page import BasePage
-import time
 
-class Search(BasePage):
+class Product(BasePage):
     class Locators:
         SEARCH_BAR_FIELD = (AppiumBy.XPATH, "//android.widget.FrameLayout[@resource-id='android:id/content']/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View/android.view.View[1]/android.widget.ImageView")
         FIRST_PRODUCT_RECOMEDATION = (AppiumBy.XPATH, "//android.view.View[contains(@content-desc, 'R$')][1]")
@@ -10,13 +9,10 @@ class Search(BasePage):
     def __init__(self,driver):
         super().__init__(driver)
 
-    def click_search_field(self):
-        self.click_element(*self.Locators.SEARCH_BAR_FIELD)
-        
-    def search_element(self, text): 
-        self.click_search_field()
-        self.send_keys_to_element(*self.Locators.SEARCH_BAR_FIELD, text)
-
-    def click_on_first_product(self):
-        time.sleep(2)
-        return self.click_element(*self.Locators.FIRST_PRODUCT_RECOMEDATION)
+    def is_product_name_correct(self, name):
+        locator = (AppiumBy.ACCESSIBILITY_ID, name)
+        return self.find_element(*locator)
+    
+    def is_product_price_correct(self, price):
+        locator = (AppiumBy.XPATH,f"//*[@content-desc and contains(@content-desc, '{price}')]")
+        return self.find_element(*locator)

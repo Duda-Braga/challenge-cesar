@@ -1,6 +1,5 @@
 from appium.webdriver.common.appiumby import AppiumBy
 from .base_page import BasePage
-from selenium.common.exceptions import NoSuchElementException
 
 class Home(BasePage):
     class Locators:
