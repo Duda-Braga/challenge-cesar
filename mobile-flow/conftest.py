@@ -17,9 +17,9 @@ def driver():
         "appium:newCommandTimeout": 3600,
         "appium:connectHardwareKeyboard": True,
         "appWaitActivity": "com.b2w.americanas.MainActivity",       
-        "appWaitDuration": 30000, 
-        "uiautomator2ServerLaunchTimeout": 30000,
-        "uiautomator2ServerInstallTimeout": 30000,
+        "appWaitDuration": 60000, 
+        "uiautomator2ServerLaunchTimeout": 60000,
+        "uiautomator2ServerInstallTimeout": 60000,
         "unicodeKeyboard": False,
         "resetKeyboard": True,
         "appium:autoGrantPermissions": True

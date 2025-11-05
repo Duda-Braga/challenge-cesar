@@ -62,6 +62,15 @@ class BasePage:
             except Exception:
                 return "" 
         return "" 
+    
+    def get_content_desc(self, by, locator):
+        element = self.find_element(by, locator)
+        if element is not False:
+            try: 
+                return element.get_attribute("content-desc")
+            except Exception:
+                return ""
+        return ""
 
     def is_element_displayed(self, by, locator):
         element = self.find_element(by, locator) 
@@ -99,7 +108,7 @@ class BasePage:
                 return False
         return False
     
-    def scroll_untill_is_visible(self, by, locator, way, max_scroll):
+    def scroll_untill_is_visible(self, by, locator, way="down", max_scroll=10):
         for i in range(max_scroll):
             try:
                 element = WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((by, locator)))
