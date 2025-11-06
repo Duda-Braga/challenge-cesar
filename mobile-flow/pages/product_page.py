@@ -11,7 +11,7 @@ class Product(BasePage):
         CLEAR_FRETE_BTN = (AppiumBy.XPATH, "//android.widget.Button[@content-desc='Apagar cep pesquisado']")
         FRETE_PRICE_MSG = (AppiumBy.XPATH, "//android.view.View[contains(@content-desc, 'Receba em até ')]")
         BUY_BTN = (AppiumBy.XPATH, "//android.view.View[@content-desc='comprar']")
-
+        CART_ICON = (AppiumBy.XPATH, "//android.widget.ImageView[@resource-id='Carrinho']")
 
     def __init__(self,driver):
         super().__init__(driver)
@@ -76,3 +76,6 @@ class Product(BasePage):
     
     def click_on_buy_product(self):
         self.click_element(*self.Locators.BUY_BTN)
+
+    def go_to_cart(self):
+        self.click_element(*self.Locators.CART_ICON)

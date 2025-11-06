@@ -4,6 +4,7 @@ import json
 from pages.home_page import Home
 from pages.search_page import Search
 from pages.product_page import Product
+from pages.cartPopup_page import CartPopup
 
 import json
 from pathlib import Path
@@ -49,7 +50,29 @@ def test_product_purchase_flow(driver, data_set):
     assert product.get_shipping_cost() == product_shippingfee, f"Shipping cost is not correspoding according to the API response. It shpuld be {product_shippingfee}, but it is {product.get_shipping_cost()}"
 
     product.click_on_buy_product()
-    time.sleep(3)
+
+    cartPopup = CartPopup(driver)
+    assert cartPopup.is_product_name_correct(product_name),  "Name is not correspoding according to the API response"
+    assert cartPopup.is_product_price_correct(product_price), "Price is not correspoding according to the API response"
+
+    increase_target = 2
+    decrease_target = 1
+    cartPopup.increase_quantity_untill_X(increase_target)
+    assert cartPopup.get_product_quantity() == increase_target, f"Quantity field did not updated when incresing qunatity. It should be {increase_target}, but it is {cartPopup.get_product_quantity()}"
+    
+    cartPopup.decrease_quantity_untill_X(decrease_target)
+    assert cartPopup.get_product_quantity() == decrease_target, f"Quantity field did not updated when decrease qunatity. It should be {decrease_target}, but it is {cartPopup.get_product_quantity()}"
+    cartPopup.increase_qunatity()
+    assert cartPopup.get_product_quantity() > 0; "Decrease button should be inactive"
+
+    cartPopup.increase_quantity_untill_X(increase_target)
+    assert cartPopup.get_product_quantity() == increase_target, f"Quantity field did not updated when incresing qunatity. It should be {increase_target}, but it is {cartPopup.get_product_quantity()}"
+    
+    cartPopup.add_to_cart()
+    
+    product.go_to_cart()
+
+    time.sleep(10)
 
 # 1. Open App: Launch the Americanas application.
 # 2. Search for Product: Use the search bar to look for a product from the wishlist.
@@ -59,13 +82,13 @@ def test_product_purchase_flow(driver, data_set):
 # Enter an invalid ZIP code, click "Calculate", and verify that an error message is displayed.
 # Enter the valid ZIP code returned by the API and validate the delivery time and shipping cost.
 # 5. Add to Cart: Tap the "Buy" button.
-
 # 6. Validate Cart Popup:
 # In the cart popup, confirm the product name and price again.
 # Increase the quantity to 2 and check if the quantity field is updated.
 # Decrease the quantity to 1 and check if the decrease button ( - ) becomes inactive.
 # Increase the quantity to 2 again.
 # 7. Add and go to cart: Proceed to the cart finalization screen.
+
 # 8. Validate Cart:
 # Confirm the product name and quantity.
 # Check if the total product value and the order subtotal are double the unit price.
