@@ -3,6 +3,30 @@ import json
 from pathlib import Path
 from appium import webdriver
 from appium.options.common.base import AppiumOptions
+from setup_fixture import get_products_and_save_json
+
+# @pytest.fixture(scope="session", autouse=True)
+# def update_wishlist_fixture():
+#     """
+#     Update json with API
+#     """
+#     try:
+#         get_products_and_save_json()
+#         print("Fixture JSON successfully generated")
+#     except Exception as e:
+#         pytest.fail(f"SETUP FAILED: {e}")
+
+#     yield
+
+# @pytest.fixture(scope="session")
+def load_wishlist():
+    """Reads the JSON from data and returns it as a dictionary"""
+    json_path = Path(__file__).parent/ "test_generated_wishlist_fixture.json"
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+
 
 @pytest.fixture(scope="function")
 def driver():

@@ -1,23 +1,17 @@
 import pytest
 import time
-import json
 from pages.home_page import Home
 from pages.search_page import Search
 from pages.product_page import Product
 from pages.cartPopup_page import CartPopup
+from conftest import load_wishlist
+from setup_fixture import get_products_and_save_json
 
-import json
-from pathlib import Path
-import os
 
-def load_wishlist():
-    """Reads the JSON from data and returns it as a dictionary"""
-    json_path = Path(__file__).parent.parent / "data" / "generated_wishlist_fixture.json"
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data
+get_products_and_save_json()
+lista = load_wishlist()
 
-@pytest.mark.parametrize("data_set",  load_wishlist())
+@pytest.mark.parametrize("data_set", lista)
 def test_product_purchase_flow(driver, data_set):
 
     product_price = data_set['Price']
