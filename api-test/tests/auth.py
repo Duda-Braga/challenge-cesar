@@ -4,6 +4,7 @@ import uuid
 
 @pytest.mark.api_test
 @pytest.mark.authentication_test
+@pytest.mark.post
 def test_susscefull_user_registration(base_url, api_client):
     unique_id = str(uuid.uuid4()) # generates a unique identifier
     new_email = f"test_{unique_id}@example.com"
@@ -26,6 +27,7 @@ def test_susscefull_user_registration(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.authentication_test
+@pytest.mark.post
 def test_registration_existing_email(base_url, api_client):
     # valid registration
     unique_id = str(uuid.uuid4())
@@ -59,6 +61,7 @@ def test_registration_existing_email(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.authentication_test
+@pytest.mark.post
 def test_registration_invalid_email_format(base_url, api_client):
 
     unique_id = str(uuid.uuid4())
@@ -80,6 +83,7 @@ def test_registration_invalid_email_format(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.authentication_test
+@pytest.mark.post
 def test_registration_invalid_email_format(base_url, api_client):
 
     unique_id = str(uuid.uuid4())
@@ -101,6 +105,7 @@ def test_registration_invalid_email_format(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.authentication_test
+@pytest.mark.post
 def test_registration_empty_password(base_url, api_client):
 
     unique_id = str(uuid.uuid4())
@@ -121,11 +126,6 @@ def test_registration_empty_password(base_url, api_client):
     expected_error_msg = "Missing data"
     assert error_msg == expected_error_msg, f"Error message should be {expected_error_msg} for registrarion without a password field, but it it {error_msg}"
 
-#extra: autentificacao de registro login com usuario existente e email novo TODO
-
-
-
-
 
 LOGIN_TEST_unique_id = str(uuid.uuid4()) 
 LOGIN_TEST_email = f"test_{LOGIN_TEST_unique_id}@example.com"
@@ -134,6 +134,7 @@ LOGIN_TEST_password = "correct_password"
 
 @pytest.mark.api_test
 @pytest.mark.authentication_test
+@pytest.mark.post
 def test_new_user(base_url, api_client):
     """"single registration for all login tests"""
     
@@ -149,6 +150,7 @@ def test_new_user(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.authentication_test
+@pytest.mark.post
 def test_succesful_login(base_url, api_client):
 
     login_data = {
@@ -166,6 +168,7 @@ def test_succesful_login(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.authentication_test
+@pytest.mark.post
 def test_login_wrong_password(base_url, api_client):
 
     login_data = {
@@ -184,6 +187,7 @@ def test_login_wrong_password(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.authentication_test
+@pytest.mark.post
 def test_login_non_existent_user(base_url, api_client):
 
     login_data = {
