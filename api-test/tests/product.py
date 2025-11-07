@@ -79,10 +79,21 @@ def test_authenticated_user_A(base_url, api_client):
         "shipping_fee": "100.00"
     }
 
+    product_data_3 = {
+        "Price": "987.99",
+        "Product": "Pirate iPhone",
+        "Zipcode": "54672",
+        "delivery_estimate": "1 days",
+        "shipping_fee": "2.00"
+    }
+
     product_response = api_client.post(f"{base_url}/wishlists/{wishilist_id}/products", json=product_data_1, headers=auth_headers)
     assert product_response.status_code == 200, f"Status should be 200 for adding a product on wishlist, but it is {product_response.status_code}"
 
     product_response = api_client.post(f"{base_url}/wishlists/{wishilist_id}/products", json=product_data_2, headers=auth_headers)
+    assert product_response.status_code == 200, f"Status should be 200 for adding a product on wishlist, but it is {product_response.status_code}"
+    
+    product_response = api_client.post(f"{base_url}/wishlists/{wishilist_id}/products", json=product_data_3, headers=auth_headers)
     assert product_response.status_code == 200, f"Status should be 200 for adding a product on wishlist, but it is {product_response.status_code}"
 
 
@@ -289,3 +300,35 @@ def x(base_url, api_client):
 
     product_response_update = api_client.put(f"{base_url}/products/{product_id}" ,json=product_data_update, headers=PRODUCT_TEST_B_auth)
     assert product_response_update.status_code == 404,f"Status should be 404 for updating anothers user product, but it is {product_response_update.status_code}"
+
+
+
+
+#delete
+@pytest.mark.api_test
+@pytest.mark.product_test
+def test_delete_product(base_url, api_client):
+    product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products", headers=PRODUCT_TEST_A_auth)
+    assert product_response.status_code == 200,f"Status should be 200 for retriving specifc product from wishlist, but it is {product_response.status_code}"
+    data_product = product_response.json()
+    product_id = data_product[-1].get('id')
+
+    product_response_update = api_client.delete(f"{base_url}/products/{product_id}", headers=PRODUCT_TEST_A_auth)
+    assert product_response_update.status_code == 204,f"Status should be 204 for deleting specifc product from wishlist, but it is {product_response_update.status_code}"
+
+@pytest.mark.api_test
+@pytest.mark.product_test
+def test_delete_nonexistent_product(base_url, api_client):
+    product_response_update = api_client.delete(f"{base_url}/products/999999", headers=PRODUCT_TEST_A_auth)
+    assert product_response_update.status_code == 404,f"Status should be 404 for deleting a non-existent product, but it is {product_response_update.status_code}"
+
+@pytest.mark.api_test
+@pytest.mark.product_test
+def test_delete_another_user_product(base_url, api_client):
+    product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products", headers=PRODUCT_TEST_A_auth)
+    assert product_response.status_code == 200,f"Status should be 200 for retriving specifc product from wishlist, but it is {product_response.status_code}"
+    data_product = product_response.json()
+    product_id = data_product[-1].get('id')
+
+    product_response_update = api_client.delete(f"{base_url}/products/{product_id}", headers=PRODUCT_TEST_B_auth)
+    assert product_response_update.status_code == 404,f"Status should be 404 for deleting anothers user product, but it is {product_response_update.status_code}"
