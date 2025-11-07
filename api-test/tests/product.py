@@ -18,6 +18,10 @@ PRODUCT_TEST_B_auth = None
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.post
+@pytest.mark.get
+@pytest.mark.put
+@pytest.mark.delete
 def test_authenticated_user_A(base_url, api_client):
     """"single registration for all post product tests"""
     
@@ -99,6 +103,10 @@ def test_authenticated_user_A(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.post
+@pytest.mark.get
+@pytest.mark.put
+@pytest.mark.delete
 def test_authenticated_user_B(base_url, api_client):
     """"single registration for all post product tests, user B"""
     
@@ -131,10 +139,12 @@ def test_authenticated_user_B(base_url, api_client):
 
 
 
+
 #post
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.post
 def test_successfully_add_product_to_wishlist(base_url, api_client):
 
     product_data = {
@@ -158,6 +168,7 @@ def test_successfully_add_product_to_wishlist(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.post
 def test_add_product_to_nonexistent_wishlist(base_url, api_client):
     product_data = {
         "Price": "15.99",
@@ -177,6 +188,7 @@ def test_add_product_to_nonexistent_wishlist(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.post
 def test_add_product_anothers_users_wishilist(base_url, api_client):
     product_data = {
         "Price": "15.99",
@@ -197,6 +209,7 @@ def test_add_product_anothers_users_wishilist(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.post
 def test_add_product_with_incomplete_data(base_url, api_client):
     product_data = {
         "Price": "15.99"
@@ -215,6 +228,7 @@ def test_add_product_with_incomplete_data(base_url, api_client):
 #get
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.get
 def test_retrieve_product_from_wishlist(base_url, api_client):
     product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products", headers=PRODUCT_TEST_A_auth)
     assert product_response.status_code == 200,f"Status should be 200 for retriving specifc product from wishlist, but it is {product_response.status_code}"
@@ -225,6 +239,7 @@ def test_retrieve_product_from_wishlist(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.get
 def test_retrieve_especific_product_from_wishlist(base_url, api_client):
     filter = "iPhone"
     product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products?Product={filter}", headers=PRODUCT_TEST_A_auth)
@@ -237,6 +252,7 @@ def test_retrieve_especific_product_from_wishlist(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.get
 def test_retrieve_purchased_product_from_wishlist(base_url, api_client):
     product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products?is_purchased=true", headers=PRODUCT_TEST_A_auth)
     assert product_response.status_code == 200,f"Status should be 200 for retriving specifc product from wishlist, but it is {product_response.status_code}"
@@ -248,6 +264,7 @@ def test_retrieve_purchased_product_from_wishlist(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.get
 def test_add_product_anothers_users_wishilist(base_url, api_client):
     product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products", headers=PRODUCT_TEST_B_auth)
     assert product_response.status_code == 404,f"Status should be 404 for retriving products from anothers user wishlist, but it is {product_response.status_code}"
@@ -258,6 +275,7 @@ def test_add_product_anothers_users_wishilist(base_url, api_client):
 #put
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.put
 def test_update_product(base_url, api_client):
     product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products", headers=PRODUCT_TEST_A_auth)
     assert product_response.status_code == 200,f"Status should be 200 for retriving specifc product from wishlist, but it is {product_response.status_code}"
@@ -277,6 +295,7 @@ def test_update_product(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.put
 def test_update_nonexisting_product(base_url, api_client):
     product_data_update = {
         "Price": "13.432.99"
@@ -288,6 +307,7 @@ def test_update_nonexisting_product(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.put
 def x(base_url, api_client):
     product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products", headers=PRODUCT_TEST_A_auth)
     assert product_response.status_code == 200,f"Status should be 200 for retriving specifc product from wishlist, but it is {product_response.status_code}"
@@ -307,6 +327,7 @@ def x(base_url, api_client):
 #delete
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.delete
 def test_delete_product(base_url, api_client):
     product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products", headers=PRODUCT_TEST_A_auth)
     assert product_response.status_code == 200,f"Status should be 200 for retriving specifc product from wishlist, but it is {product_response.status_code}"
@@ -318,12 +339,14 @@ def test_delete_product(base_url, api_client):
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.delete
 def test_delete_nonexistent_product(base_url, api_client):
     product_response_update = api_client.delete(f"{base_url}/products/999999", headers=PRODUCT_TEST_A_auth)
     assert product_response_update.status_code == 404,f"Status should be 404 for deleting a non-existent product, but it is {product_response_update.status_code}"
 
 @pytest.mark.api_test
 @pytest.mark.product_test
+@pytest.mark.delete
 def test_delete_another_user_product(base_url, api_client):
     product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products", headers=PRODUCT_TEST_A_auth)
     assert product_response.status_code == 200,f"Status should be 200 for retriving specifc product from wishlist, but it is {product_response.status_code}"
