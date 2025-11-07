@@ -7,10 +7,16 @@ PRODUCT_TEST_A_username = f"userA_{PRODUCT_TEST_A_unique_id[:8]}"
 PRODUCT_TEST_A_password = "testA_password"
 PRODUCT_TEST_A_id = None
 
+PRODUCT_TEST_B_unique_id = str(uuid.uuid4()) 
+PRODUCT_TEST_B_email = f"testB_{PRODUCT_TEST_B_unique_id}@example.com"
+PRODUCT_TEST_B_username = f"userB_{PRODUCT_TEST_B_unique_id[:8]}"
+PRODUCT_TEST_B_password = "testB_password"
+PRODUCT_TEST_B_id = None
+
 @pytest.mark.api_test
 @pytest.mark.product_test
 def test_authenticated_user_A(base_url, api_client):
-    """"single registration for all product tests"""
+    """"single registration for all post product tests"""
     
     
     user_data = {
@@ -26,11 +32,28 @@ def test_authenticated_user_A(base_url, api_client):
     global PRODUCT_TEST_A_id
     PRODUCT_TEST_A_id = data.get("id")
 
+@pytest.mark.api_test
+@pytest.mark.product_test
+def test_authenticated_user_B(base_url, api_client):
+    """"single registration for all post product tests, user B"""
+    
+    
+    user_data = {
+        "email": PRODUCT_TEST_B_email,
+        "password": PRODUCT_TEST_B_password, 
+        "username": PRODUCT_TEST_B_username
+    }
+    
+    response = api_client.post(f"{base_url}/auth/register", json=user_data)
+    assert response.status_code == 200, f"Status should be 200 for correct registration, but it is {response.status_code}"
+
+    data = response.json()
+    global PRODUCT_TEST_B_id
+    PRODUCT_TEST_B_id = data.get("id")
 
 
 
-
-
+#post
 
 @pytest.mark.api_test
 @pytest.mark.product_test
@@ -57,11 +80,11 @@ def test_successfully_add_product_to_wishlist(base_url, api_client):
     wishilist_id = data_wishilist.get('id')
 
     product_data = {
-    "Price": "15.99",
-    "Product": "The Great Gatsby",
-    "Zipcode": "90210",
-    "delivery_estimate": "5 days",
-    "shipping_fee": "2.00"
+        "Price": "15.99",
+        "Product": "The Great Gatsby",
+        "Zipcode": "90210",
+        "delivery_estimate": "5 days",
+        "shipping_fee": "2.00"
     }
 
     product_response = api_client.post(f"{base_url}/wishlists/{wishilist_id}/products", json=product_data, headers=auth_headers)
@@ -90,18 +113,117 @@ def test_add_product_to_nonexistent_wishlist(base_url, api_client):
 
 
     product_data = {
-    "Price": "15.99",
-    "Product": "The Great Gatsby",
-    "Zipcode": "90210",
-    "delivery_estimate": "5 days",
-    "shipping_fee": "2.00"
+        "Price": "15.99",
+        "Product": "The Great Gatsby",
+        "Zipcode": "90210",
+        "delivery_estimate": "5 days",
+        "shipping_fee": "2.00"
     }
 
-    product_response = api_client.post(f"{base_url}/wishlists/99999/products", json=product_data, headers=auth_headers)
+    product_response = api_client.post(f"{base_url}/wishlists/999999/products", json=product_data, headers=auth_headers)
     assert product_response.status_code == 404, f"Status should be 404 for adding a product on a non-existing wishlist, but it is {product_response.status_code}"
     
     data_product = product_response.json()
     expected_error_msg = 'Wishlist not found'
     error_msg =  data_product.get("detail")
     assert error_msg == expected_error_msg, f"Error message should be {expected_error_msg} for unathenticated user, but it it {error_msg}"
+
+@pytest.mark.api_test
+@pytest.mark.product_test
+def test_add_product_anothers_users_wishilist(base_url, api_client):
+
+    #set up user A
+    login_data_A = {
+        "email": PRODUCT_TEST_A_email,
+        "password": PRODUCT_TEST_A_password, 
+    }
+    login_response_A =  api_client.post(f"{base_url}/auth/login", json=login_data_A)
+    assert login_response_A.status_code == 200, f"Status should be 200 for correct login, but it is {login_response_A.status_code}"
+
+    data_login_A = login_response_A.json()
+    auth_headers_A = {"Authorization": f"Bearer {data_login_A['access_token']}"}
+
+
+    unique_id = str(uuid.uuid4()) 
+    wish_name = f"Wishlist name {unique_id}"
+    wish_data_A = {"name": wish_name}
+
+    wish_response_A = api_client.post(f"{base_url}//wishlists", json=wish_data_A, headers=auth_headers_A)
+    assert wish_response_A.status_code == 200, f"Status should be 200 for create new wishlist, but it is {wish_response_A.status_code}"
+
+    data_wishilist_A = wish_response_A.json()
+    wishilist_id_A = data_wishilist_A.get('id')
+
+    # login user B
+    login_data_B = {
+        "email": PRODUCT_TEST_B_email,
+        "password": PRODUCT_TEST_B_password, 
+    }
+    login_response_B =  api_client.post(f"{base_url}/auth/login", json=login_data_B)
+    assert login_response_B.status_code == 200, f"Status should be 200 for correct login, but it is {login_response_B.status_code}"
+
+    data_login_B = login_response_B.json()
+    auth_headers_B = {"Authorization": f"Bearer {data_login_B['access_token']}"}
+
+
+
+    product_data = {
+        "Price": "15.99",
+        "Product": "The Great Gatsby",
+        "Zipcode": "90210",
+        "delivery_estimate": "5 days",
+        "shipping_fee": "2.00"
+    }
+
+    product_response = api_client.post(f"{base_url}/wishlists/{wishilist_id_A}/products", json=product_data, headers=auth_headers_B)
+    assert product_response.status_code == 404, f"Status should be 404 for adding a product on another user wishlist, but it is {product_response.status_code}"
+    
+    data_product = product_response.json()
+    expected_error_msg = 'Wishlist not found'
+    error_msg =  data_product.get("detail")
+    assert error_msg == expected_error_msg, f"Error message should be {expected_error_msg} for unathenticated user, but it it {error_msg}"
+
+
+@pytest.mark.api_test
+@pytest.mark.product_test
+def test_add_product_with_incomplete_data(base_url, api_client):
+    login_data = {
+        "email": PRODUCT_TEST_A_email,
+        "password": PRODUCT_TEST_A_password, 
+    }
+    login_response =  api_client.post(f"{base_url}/auth/login", json=login_data)
+    assert login_response.status_code == 200, f"Status should be 200 for correct login, but it is {login_response.status_code}"
+
+    data_login = login_response.json()
+    auth_headers = {"Authorization": f"Bearer {data_login['access_token']}"}
+
+
+    unique_id = str(uuid.uuid4()) 
+    wish_name = f"Wishlist name {unique_id}"
+    wish_data = {"name": wish_name}
+
+    wish_response = api_client.post(f"{base_url}//wishlists", json=wish_data, headers=auth_headers)
+    assert wish_response.status_code == 200, f"Status should be 200 for create new wishlist, but it is {wish_response.status_code}"
+
+    data_wishilist = wish_response.json()
+    wishilist_id = data_wishilist.get('id')
+
+    product_data = {
+        "Price": "15.99"
+    }
+
+    product_response = api_client.post(f"{base_url}/wishlists/{wishilist_id}/products", json=product_data, headers=auth_headers)
+    assert product_response.status_code == 422, f"Status should be 422 for adding a product with incloplete data on wishlist, but it is {product_response.status_code}"
+
+    data_product = product_response.json()
+    expected_error_msg = 'Missing product data'
+    error_msg =  data_product.get("detail")
+    assert error_msg == expected_error_msg, f"Error message should be {expected_error_msg} for unathenticated user, but it it {error_msg}"
+
+
+
+
+
+#get
+
 
