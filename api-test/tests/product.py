@@ -241,3 +241,51 @@ def test_add_product_anothers_users_wishilist(base_url, api_client):
     product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products", headers=PRODUCT_TEST_B_auth)
     assert product_response.status_code == 404,f"Status should be 404 for retriving products from anothers user wishlist, but it is {product_response.status_code}"
    
+
+
+
+#put
+@pytest.mark.api_test
+@pytest.mark.product_test
+def test_update_product(base_url, api_client):
+    product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products", headers=PRODUCT_TEST_A_auth)
+    assert product_response.status_code == 200,f"Status should be 200 for retriving specifc product from wishlist, but it is {product_response.status_code}"
+    data_product = product_response.json()
+    product_id = data_product[0].get('id')
+
+    product_data_update = {
+        "Price": "15.000.99"
+    }
+
+    product_response_update = api_client.put(f"{base_url}/products/{product_id}" ,json=product_data_update, headers=PRODUCT_TEST_A_auth)
+    assert product_response_update.status_code == 200,f"Status should be 200 for updating specifc product from wishlist, but it is {product_response_update.status_code}"
+
+    data_update = product_response_update.json()
+    assert data_update.get('Price') == product_data_update['Price'], f"Failed to update, it should be { product_data_update['Price']}, but it it {data_update.get('Price')}"
+
+
+@pytest.mark.api_test
+@pytest.mark.product_test
+def test_update_nonexisting_product(base_url, api_client):
+    product_data_update = {
+        "Price": "13.432.99"
+    }
+
+    product_response_update = api_client.put(f"{base_url}/products/9999999" ,json=product_data_update, headers=PRODUCT_TEST_A_auth)
+    assert product_response_update.status_code == 404,f"Status should be 404 for updating non existing product from wishlist, but it is {product_response_update.status_code}"
+
+
+@pytest.mark.api_test
+@pytest.mark.product_test
+def x(base_url, api_client):
+    product_response = api_client.get(f"{base_url}/wishlists/{PRODUCST_TEST_A_wishlist_id}/products", headers=PRODUCT_TEST_A_auth)
+    assert product_response.status_code == 200,f"Status should be 200 for retriving specifc product from wishlist, but it is {product_response.status_code}"
+    data_product = product_response.json()
+    product_id = data_product[0].get('id')
+
+    product_data_update = {
+        "Price": "12.297.99"
+    }
+
+    product_response_update = api_client.put(f"{base_url}/products/{product_id}" ,json=product_data_update, headers=PRODUCT_TEST_B_auth)
+    assert product_response_update.status_code == 404,f"Status should be 404 for updating anothers user product, but it is {product_response_update.status_code}"
