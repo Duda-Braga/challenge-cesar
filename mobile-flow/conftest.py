@@ -5,27 +5,31 @@ from appium import webdriver
 from appium.options.common.base import AppiumOptions
 from setup_fixture import get_products_and_save_json
 
-# @pytest.fixture(scope="session", autouse=True)
-# def update_wishlist_fixture():
-#     """
-#     Update json with API
-#     """
-#     try:
-#         get_products_and_save_json()
-#         print("Fixture JSON successfully generated")
-#     except Exception as e:
-#         pytest.fail(f"SETUP FAILED: {e}")
+JSON_FILENAME = "test_generated_wishlist_fixture.json"
 
-#     yield
+def pytest_generate_tests(metafunc):
+    if "data_set" not in metafunc.fixturenames:
+        return
 
-# @pytest.fixture(scope="session")
-def load_wishlist():
-    """Reads the JSON from data and returns it as a dictionary"""
-    json_path = Path(__file__).parent/ "test_generated_wishlist_fixture.json"
+    try:
+        get_products_and_save_json()
+    except Exception as e:
+        raise RuntimeError(f"Falha ao atualizar JSON em pytest_generate_tests: {e}") from e
+
+    json_path = Path(__file__).parent / JSON_FILENAME
+    if not json_path.exists():
+        raise RuntimeError(f"Arquivo JSON não encontrado após atualização: {json_path}")
+
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    return data
 
+    def make_id(item, idx):
+        if isinstance(item, dict) and "sku" in item:
+            return f"{idx}-{item.get('sku')}"
+        return f"case-{idx}"
+
+    ids = [make_id(item, i) for i, item in enumerate(data)]
+    metafunc.parametrize("data_set", data, ids=ids)
 
 
 @pytest.fixture(scope="function")
@@ -57,12 +61,4 @@ def driver():
     # This code runs AFTER the test function completes (or fails)
     print("\nQuitting driver...")
     _driver.quit()
-
-# @pytest.fixture(scope="module")
-# def load_wishlist():
-#     """Reads the JSON from data and returns it as a dictionary"""
-#     json_path = Path(__file__).parent / "data" / "generated_wishlist_fixture.json"
-#     with open(json_path, "r", encoding="utf-8") as f:
-#         data = json.load(f)
-#     return data
 
