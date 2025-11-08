@@ -1,17 +1,11 @@
 import pytest
-import time
 from pages.home_page import Home
 from pages.search_page import Search
 from pages.product_page import Product
 from pages.cartPopup_page import CartPopup
-from conftest import load_wishlist
-from setup_fixture import get_products_and_save_json
+from pages.cart_page import Cart
 
-
-get_products_and_save_json()
-lista = load_wishlist()
-
-@pytest.mark.parametrize("data_set", lista)
+@pytest.mark.mobile_test
 def test_product_purchase_flow(driver, data_set):
 
     product_price = data_set['Price']
@@ -40,8 +34,8 @@ def test_product_purchase_flow(driver, data_set):
     product.fill_valid_zip_code(product_zipcode)
     assert product.is_delivery_time_on_screen(), "The delivery time should appear when entering a correct zip code"
     
-    assert product.get_delivery_time() == product_delivery, f"Delivery time is not correspoding according to the API response. It shpuld be {product_delivery}, but it is {product.get_delivery_time()}"
-    assert product.get_shipping_cost() == product_shippingfee, f"Shipping cost is not correspoding according to the API response. It shpuld be {product_shippingfee}, but it is {product.get_shipping_cost()}"
+    assert product.get_delivery_time() == product_delivery, f"Delivery time is not correspoding according to the API response. It should be {product_delivery}, but it is {product.get_delivery_time()}"
+    assert product.get_shipping_cost() == product_shippingfee, f"Shipping cost is not correspoding according to the API response. It should be {product_shippingfee}, but it is {product.get_shipping_cost()}"
 
     product.click_on_buy_product()
 
@@ -65,28 +59,30 @@ def test_product_purchase_flow(driver, data_set):
     cartPopup.add_to_cart()
     
     product.go_to_cart()
+    cart = Cart(driver)
+    assert cart.is_product_name_correct(product_name),  "Name is not correspoding according to the API response"
+    assert cart.is_product_quantity_correct(increase_target), "Quantity is not correspoding"
+    cart.find_total_price()
 
-    time.sleep(10)
+    
+    # convert to number
+    temporary_price = product_price.replace('.', '') 
+    price_format = temporary_price.replace(',', '.') 
+    product_price_float = float(price_format)
 
-# 1. Open App: Launch the Americanas application.
-# 2. Search for Product: Use the search bar to look for a product from the wishlist.
-# 3. Select Product: Tap on the desired product in the search results.
-# 4. Validate Product Page:
-# Confirm that the product name and price are correct according to the API response.
-# Enter an invalid ZIP code, click "Calculate", and verify that an error message is displayed.
-# Enter the valid ZIP code returned by the API and validate the delivery time and shipping cost.
-# 5. Add to Cart: Tap the "Buy" button.
-# 6. Validate Cart Popup:
-# In the cart popup, confirm the product name and price again.
-# Increase the quantity to 2 and check if the quantity field is updated.
-# Decrease the quantity to 1 and check if the decrease button ( - ) becomes inactive.
-# Increase the quantity to 2 again.
-# 7. Add and go to cart: Proceed to the cart finalization screen.
+    total_price = product_price_float * increase_target
+    assert cart.get_subtotal_price() == total_price, f"Subtotal price is not {increase_target}x bigger than original price. It should be {total_price}, but it is {cart.get_subtotal_price()}"
+    assert cart.get_total_price() == total_price, f"Total price is not {increase_target}x bigger than original price. It should be {total_price}, but it is {cart.get_total_price()}"
+    assert cart.get_ckecout_price() == total_price, f"Total price on checkout area is not {increase_target}x bigger than original price. It should be {total_price}, but it is {cart.get_total_price()}"
+    
+    cart.fill_invalid_zip_code()
+    assert cart.is_error_message_on_screen(), "The error message did not appear when entering the incorrect zip code"
+    cart.clear_zip_code_field()
+    cart.fill_valid_zip_code(product_zipcode)
+    assert cart.is_delivery_time_on_screen(), "The delivery time should appear when entering a correct zip code"
+    
+    assert cart.get_delivery_time() == product_delivery, f"Inconsistency. Delivery time is not correspoding according to the API response. It should be {product_delivery}, but it is {product.get_delivery_time()}"
+    assert cart.get_shipping_cost() == product_shippingfee, f"Inconsistency. Shipping cost is not correspoding according to the API response. It should be {product_shippingfee}, but it is {product.get_shipping_cost()}"
 
-# 8. Validate Cart:
-# Confirm the product name and quantity.
-# Check if the total product value and the order subtotal are double the unit price.
-# Confirm that the value on the "Proceed to Checkout" button also reflects the total for two units.
-# Repeat the invalid and valid ZIP code test to ensure shipping calculation consistency.
-# 9. Proceed to Checkout: Tap "Proceed to Checkout".
-# 10. Validate Redirect: Check if the login/checkout screen is displayed with the message "Enter your email to continue".
+    cart.proceed_to_checkout()
+    assert cart.check_redirection(), "Failed to procced to checkout, login/checkout screen is not displayed"

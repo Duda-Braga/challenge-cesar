@@ -56,5 +56,5 @@ def get_products_and_save_json():
 
 
 
-# if __name__ == '__main__':
-#     get_products_and_save_json()
+if __name__ == '__main__':
+    get_products_and_save_json()
