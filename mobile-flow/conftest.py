@@ -61,6 +61,13 @@ def pytest_runtest_makereport(item, call):
                 # Handle error if screenshot fails (e.g., driver quits too early)
                 print(f"\nWARNING: Failed to save screenshot: {e}")
 
+@pytest.fixture(scope="session")
+def load_data():
+    """Reads the data JSON and returns it as a dictionary"""
+    json_path = Path(__file__).parent / "data" / "test_data.json"
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
 
 @pytest.fixture(scope="function")
 def driver(request):
@@ -81,6 +88,7 @@ def driver(request):
         "unicodeKeyboard": False,
         "resetKeyboard": True,
         "appium:autoGrantPermissions": True,
+        
 
         # Capabilities for screenshot and video recording
         "appium:androidScreenshotOnFai": True, 
