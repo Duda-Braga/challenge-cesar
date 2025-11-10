@@ -18,7 +18,7 @@ def test_product_purchase_flow(driver, data_set):
     home = Home(driver)
     assert home.is_on_home_screen(), "App did not launch correctly"
 
-    home.go_to_serach_page()
+    home.go_to_search_page()
     search = Search(driver)
     search.search_element(product_name)
     assert search.click_on_first_product(), "ERROR: couldt not find the product"

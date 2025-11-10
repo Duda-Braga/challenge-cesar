@@ -85,7 +85,7 @@ def driver(request):
         "appWaitDuration": 60000, 
         "uiautomator2ServerLaunchTimeout": 60000,
         "uiautomator2ServerInstallTimeout": 60000,
-        "unicodeKeyboard": False,
+        "unicodeKeyboard": True,
         "resetKeyboard": True,
         "appium:autoGrantPermissions": True,
         

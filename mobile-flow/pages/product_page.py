@@ -13,6 +13,8 @@ class Product(BasePage):
         BUY_BTN = (AppiumBy.XPATH, "//android.view.View[@content-desc='comprar']")
         CART_ICON = (AppiumBy.XPATH, "//android.widget.ImageView[@resource-id='Carrinho']")
 
+        PRODUCT_DETAIL = (AppiumBy.XPATH, "//android.view.View[@content-desc='Detalhes do produto']")
+
     def __init__(self,driver):
         super().__init__(driver)
 
@@ -79,3 +81,7 @@ class Product(BasePage):
 
     def go_to_cart(self):
         self.click_element(*self.Locators.CART_ICON)
+
+
+    def go_to_product_detail(self):
+        self.click_element(*self.Locators.PRODUCT_DETAIL)
