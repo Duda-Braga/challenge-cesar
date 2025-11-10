@@ -2,7 +2,7 @@
   "login_credentials": 
     {
   "email": "mecb.teste@gmail.com",
-  "correct_password": "",
+  "correct_password": "Senha@345",
   "wrong_password" : "Wrong@123"
     },
 

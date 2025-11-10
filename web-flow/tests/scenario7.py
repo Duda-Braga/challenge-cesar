@@ -2,6 +2,7 @@ import pytest
 from pages.home_page import HomePage
 from pages.login_page import LoginPage
 
+@pytest.mark.web_test
 def test_login_with_wrong_password(driver, load_data):
 
     home = HomePage(driver)
