@@ -1,0 +1,17 @@
+{
+  "login_credentials": 
+    {
+  "email": "mecb.teste@gmail.com",
+  "correct_password": "Senha@345",
+  "wrong_password" : "Wrong@123"
+    },
+
+  "password_scenarios": 
+    {
+  "less_8_char": "Less#8",
+  "no_numbers": "noNumbers",
+  "no_lowercase": "NOLOWERCASE1",
+  "no_uppercase": "nouppercase2",
+  "strong_pass": "gooDpass#123"
+    }
+}
