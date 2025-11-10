@@ -2,8 +2,8 @@ import pytest
 from pages.home_page import Home
 from pages.acount_page import Account
 
-import time
 
+@pytest.mark.mobile_test
 def test_login_with_wrong_password(driver, load_data):
     home = Home(driver)
 

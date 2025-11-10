@@ -4,7 +4,6 @@ from pages.search_page import Search
 from pages.productView_page import ProductView
 from pages.product_page import Product
 
-import time
 @pytest.mark.mobile_test
 def test_search_view_product(driver, data_set):
 

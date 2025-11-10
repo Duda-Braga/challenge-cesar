@@ -3,7 +3,7 @@
     "Price": "7.999,00",
     "Product": "Apple iPhone 17 256GB Azul-névoa",
     "Zipcode": "50710330",
-    "delivery_estimate": "17 dias úteis",
+    "delivery_estimate": "15 dias úteis",
     "id": 1,
     "is_purchased": false,
     "shipping_fee": "Grátis",
@@ -11,12 +11,12 @@
   },
   {
     "Price": "2.878,80",
-    "Product": "Apple Watch se gps Caixa prateada de alumínio – 44 mm Pulseira loop esportiva nuvem azul",
+    "Product": "Apple Watch se gps Caixa prateada de alumínio – 40 mm Pulseira esportiva denin - m/g",
     "Zipcode": "50710330",
-    "delivery_estimate": "6 dias úteis",
+    "delivery_estimate": "8 dias úteis",
     "id": 2,
     "is_purchased": false,
-    "shipping_fee": "21,07",
+    "shipping_fee": "22,49",
     "wishlist_id": 1
   },
   {
