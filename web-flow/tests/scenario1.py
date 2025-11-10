@@ -4,6 +4,7 @@ from pages.login_page import LoginPage
 from pages.tempEmail_page import TempMailPage
 from pages.myAccount_page import MyAccount
 
+@pytest.mark.web_test
 def test_new_user_registration_and_password_setup(driver, load_data):
 
     home = HomePage(driver)
