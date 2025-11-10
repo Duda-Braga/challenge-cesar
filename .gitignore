@@ -1,0 +1,12 @@
+/myproject
+z.txt
+
+api-test/allure-results
+api-test/reports
+
+mobile-flow/report-html
+mobile-flow/error_video
+mobile-flow/error_screenshot
+
+web-flow/error_screenshot
+web-flow/report-html
