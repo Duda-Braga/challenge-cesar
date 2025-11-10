@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# --- Configuration Variables ---
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+
+cd "$SCRIPT_DIR"
 
 # 1. Capture the current timestamp (Format: YYYY-MM-DD_HH-MM-SS)
 TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
@@ -43,7 +45,7 @@ if [ $? -eq 0 ]; then
 
     # Option to automatically open the report
     # Uncomment the line below to open the report in the default browser:
-    # allure open "$REPORT_DIR/allure"
+    allure open "$REPORT_DIR/allure"
     
 else
     echo "ERROR: Tests failed. Check logs and the HTML report at $HTML_FILE"
