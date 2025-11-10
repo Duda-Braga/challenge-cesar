@@ -2,6 +2,7 @@ import pytest
 from pages.home_page import Home
 from pages.acount_page import Account
 
+@pytest.mark.mobile_test
 def test_login_via_password_succesfully(driver, load_data):
     home = Home(driver)
 
