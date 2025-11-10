@@ -1,0 +1,32 @@
+[
+  {
+    "Price": "7.999,00",
+    "Product": "Apple iPhone 17 256GB Azul-névoa",
+    "Zipcode": "50710330",
+    "delivery_estimate": "15 dias úteis",
+    "id": 1,
+    "is_purchased": false,
+    "shipping_fee": "Grátis",
+    "wishlist_id": 1
+  },
+  {
+    "Price": "2.749,00",
+    "Product": "Apple Watch se gps Caixa prateada de alumínio – 40 mm Pulseira esportiva denim – m/g",
+    "Zipcode": "50710330",
+    "delivery_estimate": "8 dias úteis",
+    "id": 2,
+    "is_purchased": false,
+    "shipping_fee": "22,49",
+    "wishlist_id": 1
+  },
+  {
+    "Price": "17.469,00",
+    "Product": "Apple MacBook Air 13, M3, cpu de 8 núcleos, gpu de 8 núcleos, 24GB ram, 512GB ssd - Estelar",
+    "Zipcode": "22740250",
+    "delivery_estimate": "6 dias úteis",
+    "id": 3,
+    "is_purchased": false,
+    "shipping_fee": "144,63",
+    "wishlist_id": 1
+  }
+]
